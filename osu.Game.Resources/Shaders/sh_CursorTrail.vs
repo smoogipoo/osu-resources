@@ -1,6 +1,9 @@
 attribute vec2 m_Position;
 attribute vec4 m_Colour;
 attribute vec2 m_TexCoord;
+attribute vec4 m_TexRect;
+attribute vec2 m_BlendRange;
+attribute float m_Time;
 
 varying vec2 v_DrawingPosition;
 varying vec2 v_MaskingPosition;
@@ -11,7 +14,7 @@ uniform mat4 g_ProjMatrix;
 uniform mat3 g_ToMaskingSpace;
 uniform mat3 g_ToDrawingSpace;
 
-uniform float g_FadeClock;
+uniform float g_Time;
 
 void main(void)
 {
@@ -23,7 +26,7 @@ void main(void)
 	vec3 drawingPos = g_ToDrawingSpace * vec3(m_Position, 1.0);
 	v_DrawingPosition = drawingPos.xy / drawingPos.z;
 
-	v_Colour = vec4(m_Colour.rgb, clamp(m_Colour.a - g_FadeClock, 0.0, 1.0));
+	v_Colour = vec4(m_Colour.rgb, clamp(1.0 + m_Time - g_Time, 0.0, 1.0) * m_Colour.a);
 	v_TexCoord = m_TexCoord;
 	gl_Position = g_ProjMatrix * vec4(m_Position, 1.0, 1.0);
 }
